@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -17,12 +18,12 @@ namespace VFESecurity
     public static class Patch_Building_TurretGun
     {
 
-
-        [HarmonyPatch(typeof(Building_TurretGun), nameof(Building_TurretGun.DrawExtraSelectionOverlays))]
+        //TruGerman: Continuing with redirecting vanilla to CE, just type changes
+        [HarmonyPatch(typeof(Building_TurretGunCE), nameof(Building_TurretGunCE.DrawExtraSelectionOverlays))]
         public static class DrawExtraSelectionOverlays
         {
 
-            public static void Postfix(Building_TurretGun __instance)
+            public static void Postfix(Building_TurretGunCE __instance)
             {
                 var artilleryComp = __instance.TryGetComp<CompLongRangeArtillery>();
                 if (artilleryComp != null && artilleryComp.targetedTile != TargetInfo.Invalid)
@@ -47,11 +48,11 @@ namespace VFESecurity
 
         }
 
-        [HarmonyPatch(typeof(Building_TurretGun), nameof(Building_TurretGun.OrderAttack))]
+        [HarmonyPatch(typeof(Building_TurretGunCE), nameof(Building_TurretGunCE.OrderAttack))]
         public static class OrderAttack
         {
 
-            public static void Postfix(Building_TurretGun __instance)
+            public static void Postfix(Building_TurretGunCE __instance)
             {
                 if (__instance.GetComp<CompLongRangeArtillery>() is CompLongRangeArtillery artilleryComp)
                     artilleryComp.ResetForcedTarget();
@@ -59,11 +60,11 @@ namespace VFESecurity
 
         }
 
-        [HarmonyPatch(typeof(Building_TurretGun), "TryStartShootSomething")]
+        [HarmonyPatch(typeof(Building_TurretGunCE), "TryStartShootSomething")]
         public static class TryStartShootSomething
         {
 
-            public static bool Prefix(Building_TurretGun __instance)
+            public static bool Prefix(Building_TurretGunCE __instance)
             {
                 // Don't try and automatically target if targeting a world tile
                 var artilleryComp = __instance.GetComp<CompLongRangeArtillery>();

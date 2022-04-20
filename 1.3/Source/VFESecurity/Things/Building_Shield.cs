@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -56,6 +57,8 @@ namespace VFESecurity
             {
                 foreach (var cell in coveredCells)
                 {
+                    //TruGerman: This is basic stuff, don't grab things from outside the map, yo!
+                    if(!cell.InBounds(Map)) continue;
                     var thingList = cell.GetThingList(MapHeld);
                     for (int i = 0; i < thingList.Count; i++)
                         yield return thingList[i];
@@ -69,6 +72,8 @@ namespace VFESecurity
             {
                 foreach (var cell in scanCells)
                 {
+                    //TruGerman: This is basic stuff, don't grab things from outside the map, yo!
+                    if (!cell.InBounds(Map)) continue;
                     var thingList = cell.GetThingList(MapHeld);
                     for (int i = 0; i < thingList.Count; i++)
                         yield return thingList[i];
@@ -282,6 +287,7 @@ namespace VFESecurity
             return 1;
         }
 
+        //TruGerman: Redirect to CE, might be redundant due to your own patches
         private void EnergyShieldTick()
         {
             HashSet<Thing> thingsWithinRadius = new HashSet<Thing>(ThingsWithinRadius);
@@ -289,16 +295,16 @@ namespace VFESecurity
             foreach (var thing in thingsWithinScanArea)
             {
                 // Try and block projectiles from outside
-                if (thing is Projectile proj && proj.BlockableByShield(this))
+                if (thing is ProjectileCE proj && proj.BlockableByShield(this))
                 {
-                    if (NonPublicFields.Projectile_launcher.GetValue(proj) is Thing launcher && !thingsWithinRadius.Contains(launcher))
+                    if (NonPublicFields.Projectile_launcherCE.GetValue(proj) is Thing launcher && !thingsWithinRadius.Contains(launcher))
                     {
                         // Explosives are handled separately
-                        if (!(proj is Projectile_Explosive))
-                            AbsorbDamage(proj.DamageAmount, proj.def.projectile.damageDef, proj.ExactRotation.eulerAngles.y);
+                        if (!(proj is ProjectileCE_Explosive))
+                            AbsorbDamage(proj.def.projectile.damageAmountBase, proj.def.projectile.damageDef, proj.ExactRotation.eulerAngles.y);
                         proj.Position += Rot4.FromAngleFlat((Position - proj.Position).AngleFlat).Opposite.FacingCell;
-                        NonPublicFields.Projectile_usedTarget.SetValue(proj, new LocalTargetInfo(proj.Position));
-                        NonPublicMethods.Projectile_ImpactSomething(proj);
+                        NonPublicFields.Projectile_usedTargetCE.SetValue(proj, new LocalTargetInfo(proj.Position));
+                        NonPublicMethods.Projectile_ImpactSomethingCE(proj);
                     }
                 }
 

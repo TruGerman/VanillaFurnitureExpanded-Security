@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -42,13 +43,13 @@ namespace VFESecurity
                 }
             }
         }
-        //TruGerman: This should probably be changed to use ProjectileCE instead, though I think you guys already have your own patch for that, so I don't know
-        public static bool BlockableByShield(this Projectile proj, Building_Shield shieldGen)
+        //TruGerman: Not sure if this is necessary since you guys already have your own patch
+        public static bool BlockableByShield(this ProjectileCE proj, Building_Shield shieldGen)
         {
             if (!proj.def.projectile.flyOverhead)
                 return true;
-            return !shieldGen.coveredCells.Contains(((Vector3)NonPublicFields.Projectile_origin.GetValue(proj)).ToIntVec3()) && 
-                (int)NonPublicFields.Projectile_ticksToImpact.GetValue(proj) / (float)NonPublicProperties.Projectile_get_StartingTicksToImpact(proj) <= 0.5f;
+            return !shieldGen.coveredCells.Contains(((Vector3)NonPublicFields.Projectile_originCE.GetValue(proj)).ToIntVec3()) && 
+                (int)NonPublicFields.Projectile_ticksToImpactCE.GetValue(proj) / (float)NonPublicProperties.Projectile_get_StartingTicksToImpactCE(proj) <= 0.5f;
         }
 
         //---added--- inspired by Frontier Security's method (distributed under an open-source non-profit license)

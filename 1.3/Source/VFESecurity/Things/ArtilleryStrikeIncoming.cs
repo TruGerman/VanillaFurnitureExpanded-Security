@@ -39,7 +39,8 @@ namespace VFESecurity
             base.SpawnSetup(map, respawningAfterLoad);
             //TruGerman: Whoah, a shiny detonateProjectile redirect!
             var projectileProps = ShellDef.detonateProjectile.projectile;
-            ShieldGeneratorUtility.CheckIntercept(this, map, projectileProps.GetDamageAmount(1), projectileProps.damageDef, () => this.OccupiedRect().Cells,
+            //TruGerman: I don't know if damageAmountBase is a good metric
+            ShieldGeneratorUtility.CheckIntercept(this, map, projectileProps.damageAmountBase, projectileProps.damageDef, () => this.OccupiedRect().Cells,
             postIntercept: s =>
             {
                 if (s.Energy > 0)
@@ -72,11 +73,11 @@ namespace VFESecurity
         {
             //TruGerman: Cast this to ProjectileCE instead
             var projectile = (ProjectileCE)ThingMaker.MakeThing(artilleryShellDef.detonateProjectile);
-            //TruGerman: With this, the projectiles only seem to impact at the bottom of the map, rarely spawning out of bounds. Without it, the internal exactposition will contain NaNs and therefore ALWAYS spawn out of bounds
-            projectile.destinationInt = Position.ToVector3();
+            //TruGerman: This seems to work well enough, though I feel like there are double explosions every now and then. Without it, the internal exactposition will contain NaNs and therefore ALWAYS spawn out of bounds
             GenSpawn.Spawn(projectile, Position, Map);
-            //Redirect this to use CE's system instead
-            NonPublicMethods.Projectile_ImpactSomethingCE(projectile);
+            projectile.Launch(this, Position.ToIntVec2.ToVector2());
+            projectile.ticksToImpact = 0;
+            //TruGerman: Seems like the impactSomething call isn't needed
             base.Impact();
         }
 

@@ -392,6 +392,7 @@ namespace VFESecurity
 
             // Make active artillery strike thing
             var activeArtilleryStrike = (ActiveArtilleryStrike)ThingMaker.MakeThing(ThingDefOf.VFES_ActiveArtilleryStrike);
+            //TruGerman: You might have to use CE verbs here
             activeArtilleryStrike.missRadius = ArtilleryStrikeUtility.FinalisedMissRadius(Turret.CurrentEffectiveVerb.verbProps.ForcedMissRadius, Props.maxForcedMissRadiusFactor, parent.Tile, destinationTile, Props.worldTileRange);
 
             // Simulate an attack

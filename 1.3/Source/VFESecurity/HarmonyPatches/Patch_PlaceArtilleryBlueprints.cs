@@ -15,7 +15,8 @@ namespace VFESecurity
         {
             int numArtillery = Mathf.RoundToInt(points / 60f);
             numArtillery = Mathf.Clamp(numArtillery, 1, 2);
-            List<ThingDef> possibleArtillery = DefDatabase<ThingDef>.AllDefs.Where(def => def.building != null && def.building.buildingTags.Contains("Artillery_BaseDestroyer")).ToList();
+            //TruGerman: CE removes the Artillery_BaseDestroyer weapon tag via an XML patch, which might have to be reversed, but the mods I've looked at tend to use just "Artillery" as tag, so just looking for Artillery is probably a good idea
+            List<ThingDef> possibleArtillery = DefDatabase<ThingDef>.AllDefs.Where(def => def.building != null && def.building.buildingTags.Contains("Artillery")).ToList();
             List<ThingDef> highestTechArtillery = possibleArtillery.OrderByDescending(a => a.techLevel).GroupBy(d => d.techLevel).Select(g => g.ToList()).FirstOrDefault();
             for (int i = 0; i < numArtillery; i++)
             {

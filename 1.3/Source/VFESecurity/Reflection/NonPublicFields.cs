@@ -38,6 +38,12 @@ namespace VFESecurity
         public static FieldInfo Projectile_origin = AccessTools.Field(typeof(Projectile), "origin");
         public static FieldInfo Projectile_usedTarget = AccessTools.Field(typeof(Projectile), "usedTarget");
 
+        //TruGerman: More CE fields for the shield generator. Might be redundant due to your own patches
+        public static FieldInfo Projectile_launcherCE = AccessTools.Field(typeof(ProjectileCE), "launcher");
+        public static FieldInfo Projectile_ticksToImpactCE = AccessTools.Field(typeof(ProjectileCE), "ticksToImpact");
+        public static FieldInfo Projectile_originCE = AccessTools.Field(typeof(ProjectileCE), "origin");
+        public static FieldInfo Projectile_usedTargetCE = AccessTools.Field(typeof(ProjectileCE), "intendedTarget");
+
         public static FieldInfo Site_allEnemiesDefeatedSignalSent = AccessTools.Field(typeof(Site), "allEnemiesDefeatedSignalSent");
 
         public static FieldInfo TurretTop_ticksUntilIdleTurn = AccessTools.Field(typeof(TurretTop), "ticksUntilIdleTurn");

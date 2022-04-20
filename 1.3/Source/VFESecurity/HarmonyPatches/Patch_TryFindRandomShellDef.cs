@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CombatExtended;
 using RimWorld;
 using Verse;
 using Verse.AI;
@@ -18,12 +19,13 @@ namespace VFESecurity
         /// <param name="pawn"></param>
         /// <param name="gun"></param>
         /// <param name="__result"></param>
-        private static bool Prefix(Pawn pawn, Building_TurretGun gun, ref Thing __result)
+        private static bool Prefix(Pawn pawn, Building_TurretGunCE gun, ref Thing __result)
         {
             if (gun.TryGetArtillery(out var group))
             {
                 Log.Message($"Trying to get custom ammo for {gun.Label}");
-                StorageSettings allowedShellsSettings = pawn.IsColonist ? gun.gun.TryGetComp<CompChangeableProjectile>().allowedShellsSettings : RetrieveParentSettings(gun);
+                //TruGerman: I'm not sure if it's even possible to convert from an AmmoSet to StorageSettings. Either way, this is something for the experienced modders to figure out
+                StorageSettings allowedShellsSettings =  RetrieveParentSettings(gun);
                 bool validator(Thing t) => !t.IsForbidden(pawn) && pawn.CanReserve(t, 10, 1, null, false) && (allowedShellsSettings == null || allowedShellsSettings.AllowedToAccept(t));
                 __result = GenClosest.ClosestThingReachable(gun.Position, gun.Map, ThingRequest.ForGroup(group), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false), 
                     40f, validator, null, 0, -1, false, RegionType.Set_Passable, false);
@@ -32,9 +34,9 @@ namespace VFESecurity
             return true;
         }
 
-        private static StorageSettings RetrieveParentSettings(Building_TurretGun gun)
+        private static StorageSettings RetrieveParentSettings(Building_TurretGunCE gun)
         {
-            return gun.gun.TryGetComp<CompChangeableProjectile>().GetParentStoreSettings();
+            return gun.Gun.TryGetComp<CompAmmoUser>().parent.def.building.fixedStorageSettings;
         }
     }
 }

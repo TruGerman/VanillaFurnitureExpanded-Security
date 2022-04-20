@@ -131,7 +131,10 @@ namespace VFESecurity
         {
             if (CanAttack)
             {
-                Find.World.GetComponent<WorldArtilleryTracker>().RegisterBombardment(parent);
+                var comp = Find.World.GetComponent<WorldArtilleryTracker>();
+                comp.RegisterBombardment(parent);
+                //TruGerman: The shield generator does not work if there's no registered bombardments. This didn't even work in vanilla, now it does
+                comp.bombardingWorldObjects.Add(parent);
                 artilleryCooldownTicks = BombardmentStartDelay;
                 bombardmentDurationTicks = Props.bombardmentDurationRange.RandomInRange;
                 recentRetaliationTicks = Props.bombardmentCooldownRange.RandomInRange;
