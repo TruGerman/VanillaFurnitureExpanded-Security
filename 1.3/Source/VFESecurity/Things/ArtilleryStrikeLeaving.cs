@@ -2,6 +2,7 @@
 using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 
@@ -21,7 +22,8 @@ namespace VFESecurity
 
         private Graphic cachedShellGraphic;
 
-        protected override ThingDef ShellDef => ((ActiveArtilleryStrike)innerContainer[0]).shellDef;
+        //TruGerman: Use AmmoDef instead. Also, the compiler screamed bloody murder due to an ambiguous indexer, so I changed it
+        protected override AmmoDef ShellDef => ((ActiveArtilleryStrike)innerContainer.GetAt(0)).shellDef;
 
         public override Vector3 DrawPos => Vector3.Lerp(startCell.CenterVector3, edgeCell.CenterVector3, (float)ticksToImpact / 220);
 
@@ -60,7 +62,7 @@ namespace VFESecurity
             base.DrawAt(drawLoc, flip);
         }
 
-        protected override void LeaveMap()
+        public override void LeaveMap()
         {
             if (alreadyLeft)
             {

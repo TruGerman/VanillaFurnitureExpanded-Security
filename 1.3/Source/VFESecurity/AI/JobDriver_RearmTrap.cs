@@ -26,7 +26,7 @@ namespace VFESecurity
 
         private CompRearmable RearmableComp => TargetThingA.TryGetComp<CompRearmable>();
 
-        protected override IEnumerable<Toil> MakeNewToils()
+        public override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOnDespawnedOrNull(TrapInd);
             this.FailOnThingMissingDesignation(TrapInd, DesignationDefOf.VFES_RearmTrap);

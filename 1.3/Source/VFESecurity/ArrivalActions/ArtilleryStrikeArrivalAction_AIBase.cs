@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -43,7 +44,8 @@ namespace VFESecurity
             // Boom
             if (CanDoArriveAction)
             {
-                var harmfulStrikes = artilleryStrikes.Where(s => s.shellDef.projectile.damageDef.harmsHealth);
+                //TruGerman: Get your non-null projectile references here!
+                var harmfulStrikes = artilleryStrikes.Where(s => s.shellDef.detonateProjectile.projectile.damageDef.harmsHealth);
                 if (harmfulStrikes.Any())
                 {
                     PreStrikeAction();

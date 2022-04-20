@@ -18,7 +18,7 @@ namespace VFESecurity
     public class MoteSpotLight : Mote
     {
 
-        protected override bool EndOfLife => AgeSecs > lifespan;
+        public override bool EndOfLife => AgeSecs > lifespan;
 
         public override float Alpha => 0.5f;
 

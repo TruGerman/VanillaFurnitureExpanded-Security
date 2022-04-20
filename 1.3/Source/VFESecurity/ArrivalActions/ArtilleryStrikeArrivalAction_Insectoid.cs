@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -39,7 +40,8 @@ namespace VFESecurity
 
         protected override void StrikeAction(ActiveArtilleryStrike strike, CellRect mapRect, CellRect baseRect, ref bool destroyed)
         {
-            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.projectile.explosionRadius, true);
+            //TruGerman: Access projectile via detonateProjectile, as it'd be null otherwise
+            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.detonateProjectile.projectile.explosionRadius, true);
             int cellsInRect = radialCells.Count(c => baseRect.Contains(c));
 
             // Aggro the insects

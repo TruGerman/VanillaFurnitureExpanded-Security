@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -15,13 +16,13 @@ using HarmonyLib;
 
 namespace VFESecurity
 {
-
     public class ArtilleryStrikeIncoming : ArtilleryStrikeSkyfaller
     {
 
-        public ThingDef artilleryShellDef;
+        //TruGerman: Yeah, you guessed it, more AmmoDefs
+        public AmmoDef artilleryShellDef;
 
-        protected override ThingDef ShellDef => artilleryShellDef;
+        protected override AmmoDef ShellDef => artilleryShellDef;
 
         public override Graphic Graphic
         {
@@ -36,7 +37,8 @@ namespace VFESecurity
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
-            var projectileProps = ShellDef.projectile;
+            //TruGerman: Whoah, a shiny detonateProjectile redirect!
+            var projectileProps = ShellDef.detonateProjectile.projectile;
             ShieldGeneratorUtility.CheckIntercept(this, map, projectileProps.GetDamageAmount(1), projectileProps.damageDef, () => this.OccupiedRect().Cells,
             postIntercept: s =>
             {
@@ -48,13 +50,14 @@ namespace VFESecurity
         public override void Tick()
         {
             // Sounds
-            if (ticksToImpact == 60 && Find.TickManager.CurTimeSpeed == TimeSpeed.Normal && !artilleryShellDef.projectile.soundImpactAnticipate.NullOrUndefined())
-                artilleryShellDef.projectile.soundImpactAnticipate.PlayOneShot(this);
+            //TruGerman: Another redirect to detonateProjectile
+            if (ticksToImpact == 60 && Find.TickManager.CurTimeSpeed == TimeSpeed.Normal && !artilleryShellDef.detonateProjectile.projectile.soundImpactAnticipate.NullOrUndefined())
+                artilleryShellDef.detonateProjectile.projectile.soundImpactAnticipate.PlayOneShot(this);
 
             base.Tick();
         }
 
-        protected override void HitRoof()
+        public override void HitRoof()
         {
             if (Map.roofGrid.RoofAt(Position) is RoofDef roof && roof.isThickRoof)
             {
@@ -65,11 +68,15 @@ namespace VFESecurity
             base.HitRoof();
         }
 
-        protected override void Impact()
+        public override void Impact()
         {
-            var projectile = (Projectile)ThingMaker.MakeThing(artilleryShellDef);
+            //TruGerman: Cast this to ProjectileCE instead
+            var projectile = (ProjectileCE)ThingMaker.MakeThing(artilleryShellDef.detonateProjectile);
+            //TruGerman: With this, the projectiles only seem to impact at the bottom of the map, rarely spawning out of bounds. Without it, the internal exactposition will contain NaNs and therefore ALWAYS spawn out of bounds
+            projectile.destinationInt = Position.ToVector3();
             GenSpawn.Spawn(projectile, Position, Map);
-            NonPublicMethods.Projectile_ImpactSomething(projectile);
+            //Redirect this to use CE's system instead
+            NonPublicMethods.Projectile_ImpactSomethingCE(projectile);
             base.Impact();
         }
 

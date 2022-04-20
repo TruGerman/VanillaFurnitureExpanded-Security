@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -22,6 +23,10 @@ namespace VFESecurity
             Delegate.CreateDelegate(typeof(Func<Projectile, float>), null, AccessTools.Property(typeof(Projectile), "StartingTicksToImpact").GetGetMethod(true));
 
         public static Action<TurretTop, float> TurretTop_set_CurRotation = (Action<TurretTop, float>)
+            Delegate.CreateDelegate(typeof(Action<TurretTop, float>), null, AccessTools.Property(typeof(TurretTop), "CurRotation").GetSetMethod(true));
+
+        //TruGerman: Yet another redirect to CE
+        public static Action<TurretTop, float> TurretTop_set_CurRotationCE = (Action<TurretTop, float>)
             Delegate.CreateDelegate(typeof(Action<TurretTop, float>), null, AccessTools.Property(typeof(TurretTop), "CurRotation").GetSetMethod(true));
 
     }

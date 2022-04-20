@@ -2,6 +2,7 @@
 using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
+using CombatExtended;
 using Verse;
 
 namespace VFESecurity
@@ -24,7 +25,8 @@ namespace VFESecurity
         {
             if (Find.WorldObjects.WorldObjectAt(tile, RimWorld.WorldObjectDefOf.PeaceTalks) is PeaceTalks peaceTalks)
             {
-                if (artilleryStrikes.Any(s => s.shellDef.projectile.damageDef.harmsHealth))
+                //TruGerman: Would you look at that, it's *another* null counter!
+                if (artilleryStrikes.Any(s => s.shellDef.detonateProjectile.projectile.damageDef.harmsHealth))
                 {
                     var faction = peaceTalks.Faction;
                     faction.TryAffectGoodwillWith(Faction.OfPlayer, -99999, reason: DefDatabase<HistoryEventDef>.GetNamed("VFES_ArtilleryStrike"), lookTarget: peaceTalks);

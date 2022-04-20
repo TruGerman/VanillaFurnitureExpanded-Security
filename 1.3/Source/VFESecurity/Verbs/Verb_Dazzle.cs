@@ -20,7 +20,7 @@ namespace VFESecurity
 
         public ExtendedVerbProperties ExtendedVerbProps => EquipmentSource.def.GetModExtension<ExtendedVerbProperties>() ?? ExtendedVerbProperties.defaultValues;
 
-        protected override bool TryCastShot()
+        public override bool TryCastShot()
         {
             // Target and caster are on different maps
             if (currentTarget.HasThing && (currentTarget.Thing.Map != caster.Map) || !(currentTarget.Thing is Pawn))

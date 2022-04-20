@@ -38,7 +38,7 @@ namespace VFESecurity
             rearmableComp = GetComp<CompRearmable>();
         }
 
-        protected override void SpringSub(Pawn p)
+        public override void SpringSub(Pawn p)
         {
             if (rearmableComp.armed)
             {

@@ -42,7 +42,7 @@ namespace VFESecurity
                 }
             }
         }
-
+        //TruGerman: This should probably be changed to use ProjectileCE instead, though I think you guys already have your own patch for that, so I don't know
         public static bool BlockableByShield(this Projectile proj, Building_Shield shieldGen)
         {
             if (!proj.def.projectile.flyOverhead)
@@ -57,7 +57,7 @@ namespace VFESecurity
             var innerContainer = dropPod.Contents.innerContainer;
             for (int i = 0; i < innerContainer.Count; i++)
             {
-                if (innerContainer[i] is Pawn pawn)
+                if (innerContainer.GetAt(i) is Pawn pawn)
                 {
                     if (GenHostility.IsActiveThreatToPlayer(pawn) || pawn.RaceProps.IsMechanoid)
                     {

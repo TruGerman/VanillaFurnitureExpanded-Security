@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -23,6 +24,10 @@ namespace VFESecurity
 
         public static FieldInfo Building_TurretGun_burstCooldownTicksLeft = AccessTools.Field(typeof(Building_TurretGun), "burstCooldownTicksLeft");
         public static FieldInfo Building_TurretGun_top = AccessTools.Field(typeof(Building_TurretGun), "top");
+
+        //TruGerman: Use CE's fields instead
+        public static FieldInfo Building_TurretGun_burstCooldownTicksLeftCE = AccessTools.Field(typeof(Building_TurretGunCE), "burstCooldownTicksLeft");
+        public static FieldInfo Building_TurretGun_topCE = AccessTools.Field(typeof(Building_TurretGunCE), "top");
 
         public static FieldInfo Explosion_cellsToAffect = AccessTools.Field(typeof(Explosion), "cellsToAffect");
 

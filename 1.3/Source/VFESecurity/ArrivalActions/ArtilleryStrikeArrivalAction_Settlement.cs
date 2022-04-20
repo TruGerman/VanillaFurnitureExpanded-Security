@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using RimWorld.Planet;
 using System.Linq;
+using CombatExtended;
 using Verse;
 
 namespace VFESecurity
@@ -33,7 +34,8 @@ namespace VFESecurity
 
         protected override void StrikeAction(ActiveArtilleryStrike strike, CellRect mapRect, CellRect baseRect, ref bool destroyed)
         {
-            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.projectile.explosionRadius, true);
+            //TruGerman: See also: The billion dollar mistake (it avoids accessing null)
+            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.detonateProjectile.projectile.explosionRadius, true);
             int cellsInRect = radialCells.Count(c => baseRect.Contains(c));
 
             // Destroy settlement

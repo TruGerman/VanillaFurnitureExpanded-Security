@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -30,10 +31,12 @@ namespace VFESecurity
         }
 
         public float missRadius;
-        public ThingDef shellDef;
+        //TruGerman: AmmoDef. Enough said.
+        public AmmoDef shellDef;
         public int shellCount;
 
-        public float Speed => shellDef.projectile.speed;
+        //TruGerman: Another redirect to detonateProjectile
+        public float Speed => shellDef.detonateProjectile.projectile.speed;
 
     }
 

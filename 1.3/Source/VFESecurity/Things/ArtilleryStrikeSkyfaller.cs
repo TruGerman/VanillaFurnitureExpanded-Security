@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -21,7 +22,8 @@ namespace VFESecurity
 
         private Sustainer ambientSustainer;
 
-        protected abstract ThingDef ShellDef
+        //TruGerman: Use AmmoDef instead
+        protected abstract AmmoDef ShellDef
         {
             get;
         }
@@ -29,8 +31,9 @@ namespace VFESecurity
         public override void Tick()
         {
             // Sounds
-            if (ambientSustainer == null && !ShellDef.projectile.soundAmbient.NullOrUndefined())
-                ambientSustainer = ShellDef.projectile.soundAmbient.TrySpawnSustainer(SoundInfo.InMap(this, MaintenanceType.PerTick));
+            //TruGerman: Another reroute to detonateProjectile
+            if (ambientSustainer == null && !ShellDef.detonateProjectile.projectile.soundAmbient.NullOrUndefined())
+                ambientSustainer = ShellDef.detonateProjectile.projectile.soundAmbient.TrySpawnSustainer(SoundInfo.InMap(this, MaintenanceType.PerTick));
             if (ambientSustainer != null)
                 ambientSustainer.Maintain();
 

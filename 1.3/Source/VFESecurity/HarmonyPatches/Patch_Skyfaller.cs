@@ -38,7 +38,7 @@ namespace VFESecurity
                                         var innerContainer = dropPod.Contents.innerContainer;
                                         for (int i = 0; i < innerContainer.Count; i++)
                                         {
-                                            var thing = innerContainer[i];
+                                            var thing = innerContainer.GetAt(i);
                                             if (thing is Pawn pawn)
                                                 ShieldGeneratorUtility.KillPawn(pawn, dropPod.Position, dropPod.Map);
                                         }

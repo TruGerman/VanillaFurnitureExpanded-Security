@@ -2,6 +2,7 @@
 using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
+using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -31,14 +32,17 @@ namespace VFESecurity
 
         public CompProperties_LongRangeArtillery Props => (CompProperties_LongRangeArtillery)props;
 
-        private Building_TurretGun Turret => (Building_TurretGun)parent;
-        private CompChangeableProjectile ChangeableProjectile => Turret.gun.TryGetComp<CompChangeableProjectile>();
+        //TruGerman: Changed it to use CE's turret class instead
+        private Building_TurretGunCE Turret => (Building_TurretGunCE)parent;
+        //TruGerman: It only makes sense to use CE's ammo user here
+        private CompAmmoUser AmmoUser => Turret.Gun.TryGetComp<CompAmmoUser>();
         private CompRefuelable RefuelableComp => parent.GetComp<CompRefuelable>();
         private CompPowerTrader PowerComp => parent.GetComp<CompPowerTrader>();
         private CompMannable MannableComp => parent.GetComp<CompMannable>();
 
-        public bool CanLaunch => (PowerComp == null || PowerComp.PowerOn) && (RefuelableComp == null || RefuelableComp.HasFuel) && (ChangeableProjectile == null || ChangeableProjectile.Loaded)
-            && (MannableComp == null || MannableComp.MannedNow) && (int)NonPublicFields.Building_TurretGun_burstCooldownTicksLeft.GetValue(Turret) <= 0 && !parent.OccupiedRect().Cells.Any(c => c.Roofed(parent.Map));
+        //TruGerman: Had to modify some of the property calls to work with the ammo user
+        public bool CanLaunch => (PowerComp == null || PowerComp.PowerOn) && (RefuelableComp == null || RefuelableComp.HasFuel) && (AmmoUser == null || AmmoUser.HasAmmoOrMagazine)
+            && (MannableComp == null || MannableComp.MannedNow) && (int)NonPublicFields.Building_TurretGun_burstCooldownTicksLeftCE.GetValue(Turret) <= 0 && !parent.OccupiedRect().Cells.Any(c => c.Roofed(parent.Map));
 
         private int CurAngle => targetedTile != GlobalTargetInfo.Invalid ? (int)Find.WorldGrid.GetDirection8WayFromTo(parent.Map.Tile, targetedTile.Tile) * 45 : -1;
 
@@ -94,8 +98,9 @@ namespace VFESecurity
             // Automatically attack if there is a forced target
             if (targetedTile != GlobalTargetInfo.Invalid)
             {
-                var turretTop = (TurretTop)NonPublicFields.Building_TurretGun_top.GetValue(Turret);
-                NonPublicProperties.TurretTop_set_CurRotation(turretTop, CurAngle);
+                var turretTop = (TurretTop)NonPublicFields.Building_TurretGun_topCE.GetValue(Turret);
+                //TruGerman: Use CE's property instead
+                NonPublicProperties.TurretTop_set_CurRotationCE(turretTop, CurAngle);
                 NonPublicFields.TurretTop_ticksUntilIdleTurn.SetValue(turretTop, Rand.RangeInclusive(150, 350));
                 if (CanLaunch)
                 {
@@ -320,8 +325,8 @@ namespace VFESecurity
             for (int i = 0; i < compList.Count; i++)
             {
                 var comp = compList[i];
-                NonPublicMethods.Building_TurretGun_ResetForcedTarget(comp.Turret);
-                NonPublicMethods.Building_TurretGun_ResetCurrentTarget(comp.Turret);
+                NonPublicMethods.Building_TurretGun_ResetForcedTargetCE(comp.Turret);
+                NonPublicMethods.Building_TurretGun_ResetCurrentTargetCE(comp.Turret);
                 comp.targetedTile = t;
                 SoundDefOf.TurretAcquireTarget.PlayOneShot(new TargetInfo(comp.parent.Position, comp.parent.Map, false));
                 comp.ResetWarmupTicks();
@@ -390,15 +395,17 @@ namespace VFESecurity
             activeArtilleryStrike.missRadius = ArtilleryStrikeUtility.FinalisedMissRadius(Turret.CurrentEffectiveVerb.verbProps.ForcedMissRadius, Props.maxForcedMissRadiusFactor, parent.Tile, destinationTile, Props.worldTileRange);
 
             // Simulate an attack
-            if (ChangeableProjectile != null)
+            //TruGerman: Make sure it uses the AmmoUser
+            if (AmmoUser != null)
             {
-                activeArtilleryStrike.shellDef = ChangeableProjectile.Projectile;
+                activeArtilleryStrike.shellDef = AmmoUser.CurrentAmmo;
                 activeArtilleryStrike.shellCount = 1;
-                ChangeableProjectile.Notify_ProjectileLaunched();
+                AmmoUser.Notify_ShotFired();
+                AmmoUser.TryReduceAmmoCount();
             }
             else
             {
-                activeArtilleryStrike.shellDef = verb.GetProjectile();
+                activeArtilleryStrike.shellDef = (AmmoDef)verb.GetProjectile();
                 for (int j = 0; j < verb.verbProps.burstShotCount; j++)
                 {
                     activeArtilleryStrike.shellCount++;
@@ -406,7 +413,7 @@ namespace VFESecurity
                         RefuelableComp.ConsumeFuel(verb.verbProps.consumeFuelPerShot);
                 }
             }
-            NonPublicMethods.Building_TurretGun_BurstComplete(Turret);
+            NonPublicMethods.Building_TurretGun_BurstCompleteCE(Turret);
 
             var artilleryStrikeLeaving = (ArtilleryStrikeLeaving)SkyfallerMaker.MakeSkyfaller(ThingDefOf.VFES_ArtilleryStrikeLeaving, activeArtilleryStrike);
             artilleryStrikeLeaving.startCell = parent.Position;

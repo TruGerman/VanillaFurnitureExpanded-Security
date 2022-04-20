@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using RimWorld.Planet;
 using System.Linq;
+using CombatExtended;
 using Verse;
 
 namespace VFESecurity
@@ -29,7 +30,8 @@ namespace VFESecurity
         protected override void StrikeAction(ActiveArtilleryStrike strike, CellRect mapRect, CellRect baseRect, ref bool destroyed)
         {
             Log.Message(Site.AllComps.ToStringSafeEnumerable());
-            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.projectile.explosionRadius, true);
+            //TruGerman: Same thing here, shellDef.projectile seems to be null all the time, this fixes things
+            var radialCells = GenRadial.RadialCellsAround(mapRect.RandomCell, strike.shellDef.detonateProjectile.projectile.explosionRadius, true);
             int cellsInRect = radialCells.Count(c => baseRect.Contains(c));
 
             // Destroy outpost and give reward
