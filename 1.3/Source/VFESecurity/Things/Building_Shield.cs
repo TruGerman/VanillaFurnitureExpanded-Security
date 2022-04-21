@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CombatExtended;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -113,6 +112,7 @@ namespace VFESecurity
                 FleckMaker.ThrowDustPuff(loc, Map, Rand.Range(0.8f, 1.2f));
             }
             float energyLoss = amount * EnergyLossMultiplier(def) * EnergyLossPerDamage;
+            //TruGerman: You might want to nerf the damage a bit, as one hit is able to take down the shield gen
             Energy -= energyLoss;
 
             // try to do short circuit
@@ -260,9 +260,6 @@ namespace VFESecurity
                     // Power consumption
                     if (PowerTraderComp != null)
                         PowerTraderComp.PowerOutput = -PowerTraderComp.Props.basePowerConsumption;
-
-                    if ((ShieldRadius < EdgeCellRadius + 1 || Find.TickManager.TicksGame % 2 == 0) && Energy > 0)
-                        EnergyShieldTick();
                 }
                 else if (PowerTraderComp != null)
                     PowerTraderComp.PowerOutput = -ExtendedBuildingProps.inactivePowerConsumption;
@@ -285,33 +282,6 @@ namespace VFESecurity
                 return 4;
 
             return 1;
-        }
-
-        //TruGerman: Redirect to CE, might be redundant due to your own patches
-        private void EnergyShieldTick()
-        {
-            HashSet<Thing> thingsWithinRadius = new HashSet<Thing>(ThingsWithinRadius);
-            HashSet<Thing> thingsWithinScanArea = new HashSet<Thing>(ThingsWithinScanArea);
-            foreach (var thing in thingsWithinScanArea)
-            {
-                // Try and block projectiles from outside
-                if (thing is ProjectileCE proj && proj.BlockableByShield(this))
-                {
-                    if (NonPublicFields.Projectile_launcherCE.GetValue(proj) is Thing launcher && !thingsWithinRadius.Contains(launcher))
-                    {
-                        // Explosives are handled separately
-                        if (!(proj is ProjectileCE_Explosive))
-                            AbsorbDamage(proj.def.projectile.damageAmountBase, proj.def.projectile.damageDef, proj.ExactRotation.eulerAngles.y);
-                        proj.Position += Rot4.FromAngleFlat((Position - proj.Position).AngleFlat).Opposite.FacingCell;
-                        NonPublicFields.Projectile_usedTargetCE.SetValue(proj, new LocalTargetInfo(proj.Position));
-                        NonPublicMethods.Projectile_ImpactSomethingCE(proj);
-                    }
-                }
-
-                if (thing is Skyfaller)
-                {
-                }
-            }
         }
 
         private void Notify_EnergyDepleted()

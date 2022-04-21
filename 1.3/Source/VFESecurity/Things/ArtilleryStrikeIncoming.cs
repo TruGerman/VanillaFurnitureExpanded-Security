@@ -75,7 +75,7 @@ namespace VFESecurity
             var projectile = (ProjectileCE)ThingMaker.MakeThing(artilleryShellDef.detonateProjectile);
             //TruGerman: This seems to work well enough, though I feel like there are double explosions every now and then. Without it, the internal exactposition will contain NaNs and therefore ALWAYS spawn out of bounds
             GenSpawn.Spawn(projectile, Position, Map);
-            projectile.Launch(this, Position.ToIntVec2.ToVector2());
+            projectile.Launch(this, new Vector2(Position.x, Position.z));
             projectile.ticksToImpact = 0;
             //TruGerman: Seems like the impactSomething call isn't needed
             base.Impact();
